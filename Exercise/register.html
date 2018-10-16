@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register page</title>
+    <style type="text/css">
+        html{
+            background-color: #CCFFFF;
+        }
+        body{
+            text-align: center;
+        }
+        span{
+            display: none;
+            font-size: 15px;
+            color: red;
+        }
+    </style>
+    <script type="text/javascript">
+        function del_space(ori_string) {
+            // delete the space at the beginning and end
+            var pat = new RegExp("\\b\\S.*\\S\\b"); //正则表达式进行筛选
+            return pat.exec(ori_string);
+        }
+        function check_psw(psw) {
+            // check the password whether it is a strong type
+            var pat = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$"); 
+            if(null == pat.exec(psw)) return false;
+            else return true;
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Welcome!</h1>
+    <form method="post">
+        Your Username: &nbsp&nbsp<input type="text" name="username" required="required" 
+        onblur="
+            username.value = del_space(username.value);
+            if(username.value.length < 3 || username.value.length > 15){
+                username_label.style.display = 'inline-block';
+                username.value = '';
+            }
+            else{
+                username_label.style.display = 'none';
+            }
+        " />
+        <br/>
+        <span id="username_label">
+            The lenth of username should between 3 and 15 !
+        </span>
+        <br/>
+        Your Password: &nbsp&nbsp&nbsp<input type="password" name="psw" required="required" 
+        onblur="
+            psw.value = del_space(psw.value);
+            if(!check_psw(psw.value)){
+                psw_label.style.display = 'inline-block';
+                psw.value = '';
+            }
+            else{
+                psw_label.style.display = 'none';
+            }
+        " />
+        <br/>
+        <span id="psw_label">
+            The password is not strong enough !(8 ~ 16, both number and word)
+        </span>
+        <br/>
+        Repeat password: <input type="password" name="psw_repeat" required="required" 
+        onblur="
+            psw_repeat.value = del_space(psw_repeat.value);
+            if(psw_repeat.value != psw.value){
+                psw_repeat_label.style.display = 'inline-block';
+                psw_repeat.value = '';
+            }
+            else{
+                psw_repeat_label.style.display = 'none';
+            }
+        " />
+        <br/>
+        <span id="psw_repeat_label">
+            Two passwords are different !
+        </span>
+        <br/>
+        <input type="submit" name="submit" value="Submit" />
+    </form>
+</body>
+</html>
