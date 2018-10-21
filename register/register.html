@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+        html{
+            background-color: #FFCCAF;
+            background-image: url(bg_pic.jpg), url(bg_pic.jpg);
+            background-attachment: fixed, fixed;
+            background-repeat: repeat-y, repeat-y;
+            background-size: 25%;
+            background-position: 100%, 0%, 0%, 0%;
+        }
+        body{
+            text-align: center;
+            font-size: 20px;
+        }
+        span.label{
+            display: none;
+            font-size: 15px;
+            color: red;
+        }
+        span.anno{
+            font-size: 15px;
+            color: red;
+        }
+        input[type=submit]{
+            width: 200px;
+            height: 30px;
+            background-color: #FFCC88;
+        }
+        td#tip{
+            font-size: 15px;
+        }
+    </style>
+    <script type="text/javascript">
+        function del_space(ori_string) {
+            // delete the space at the beginning and end
+            return ori_string.replace(/(^\s*)|(\s*)$/g,""); // '/g' means replace all the right ex
+        }
+        function check_psw(psw) {
+            // check the password whether it is a strong type
+            var pat = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$"); 
+            if(null == pat.exec(psw)) return false;
+            else return true;
+        }
+        function check_is_data(str){
+            // check the string is a true data or not
+            var pat = new RegExp("^\\d{4}\.\\d{1,2}\.\\d{1,2}$"); 
+            if(null == pat.exec(str)) return false;
+            else{
+                var year = Number(str.split(".")[0]);
+                var month = Number(str.split(".")[1]);
+                var day = Number(str.split(".")[2]);
+                if(1868 < year && year < 2019 && // age is 1 ~ 150
+                    0 < month && month < 13 &&
+                    0 < day && day < 32){
+                    if(month in [4,6,9,11] && day == 31){
+                        return false;
+                    }
+                    if(month == 2 && day > 29){
+                        return false;
+                    }
+                    if(month == 2 && year % 4 != 0 && day == 29){ // leap year
+                        return false;
+                    }
+                    return true;
+                }
+                else return false;
+            }
+        }
+        function check_is_number(str){
+            // check the string is a number or not
+            var pat = new RegExp("^\\d+$"); 
+            if(null == pat.exec(str)) return false;
+            else return true;
+        }
+        function check_checked_number(){
+            var hobbySelect = document.getElementsByName('hobby');
+            maxNums = 3;
+            for(var i in hobbySelect){
+                hobbySelect[i].onclick = function (){
+                    var _hobbySelect = document.getElementsByName('hobby');
+                    cNums = 0;
+                    for(var i in _hobbySelect){
+                        if(i == 'length') break;
+                        if(_hobbySelect[i].checked){
+                            cNums ++;
+                        }
+                    }
+                    if(cNums > maxNums){
+                        this.checked = false;
+                        alert('You can only choose three at most !');
+                    } 
+                }
+            }
+        }
+    </script>
+    <title>Register page</title>
+</head>
+
+
+<body>
+    <h1>Welcome to register!</h1>
+    <form method="post">
+        <table  align="center">
+            <tr>
+                <td>
+                    Your Username:
+                </td>
+                <td>
+                    <input type="text" name="username" required="required" 
+                    onblur="
+                    username.value = del_space(username.value);
+                    if(username.value.length < 3 || username.value.length > 15){
+                        username_label.style.display = 'inline-block';
+                        username.value = '';
+                    }
+                    else{
+                        username_label.style.display = 'none';
+                    }
+                    " />
+                    <span class="anno">
+                        *
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span id="username_label" class="label">
+                        Need: string length is 3 ~ 15 !
+                    </span> 
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Your Password:
+                </td>
+                <td>
+                    <input type="password" name="psw" required="required" 
+                    onblur="
+                    psw.value = del_space(psw.value);
+                    if(!check_psw(psw.value)){
+                        psw_label.style.display = 'inline-block';
+                        psw.value = '';
+                    }
+                    else{
+                        psw_label.style.display = 'none';
+                    }
+                    " />
+                    <span class="anno">
+                        *
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span id="psw_label" class="label">
+                        Need: 8 ~ 16, including both number and word !
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Repeat password:
+                </td>
+                <td>
+                    <input type="password" name="psw_repeat" required="required" 
+                    onblur="
+                    psw_repeat.value = del_space(psw_repeat.value);
+                    if(psw_repeat.value != psw.value){
+                        psw_repeat_label.style.display = 'inline-block';
+                        psw_repeat.value = '';
+                    }
+                    else{
+                        psw_repeat_label.style.display = 'none';
+                    }
+                    " />
+                    <span class="anno">
+                        *
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span id="psw_repeat_label" class="label">
+                        Two passwords inputed are different !
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Your birthday:
+                </td>
+                <td>
+                    <input type="text" name="birthday"
+                    onblur="
+                    birthday.value = del_space(birthday.value);
+                    if(!check_is_data(birthday.value)){
+                        birthday_label.style.display = 'inline-block';
+                        birthday.value = '';
+                        age.readOnly = false; // cancel the attribute 'readOnly'
+                    }
+                    else{
+                        age.value = 2019 - birthday.value.split('.')[0];
+                        age.readOnly = 'true'; // set the attribute 'readOnly'
+                        birthday_label.style.display = 'none';
+                    }
+                    " />
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span id="birthday_label" class="label">
+                        The birthday inputed is not right !
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Your age:
+                </td>
+                <td>
+                    <input type="text" name="age"
+                    onblur="
+                    age.value = del_space(age.value);
+                    if((!check_is_number(age.value)) || 150 < age.value || age.value < 1){
+                        age_label.style.display = 'inline-block';
+                        age.value = '';
+                    }
+                    else{
+                        age_label.style.display = 'none';
+                    }
+                    " />
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span id="age_label" class="label">
+                        The age inputed is not right !
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Your hobby(s):
+                </td>
+                <td align="left">
+                    <input type="checkbox" name="hobby" value="Swimming" onclick="check_checked_number()">Swimming
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td align="left">
+                    <input type="checkbox" name="hobby" value="Football" onclick="check_checked_number()">Football
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td align="left">
+                    <input type="checkbox" name="hobby" value="Basketball" onclick="check_checked_number()">Basketball
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td align="left">
+                    <input type="checkbox" name="hobby" value="Volleyball" onclick="check_checked_number()">Volleyball
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td align="left">
+                    <input type="checkbox" name="hobby" value="Movies" onclick="check_checked_number()">Watching movies
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td id="tip">
+                    (Choose three at most !)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+        </table>
+        <input type="submit" name="Register" value="Register" />
+    </form>
+</div>
+</body>
+</html>
+
